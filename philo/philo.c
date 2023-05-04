@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 13:58:25 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/04 17:21:04 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/04 17:57:45 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ static int	init_share(t_share *share, t_args *args)
 	share->full_philo = 0;
 	share->start_time = get_time();
 	pthread_mutex_init(&(share->lock_m), NULL);
-	pthread_mutex_init(&(share->died_m), NULL);
 	pthread_mutex_init(&(share->print_m), NULL);
 	return (0);
 }
@@ -82,31 +81,26 @@ static int	init_philo(t_philo **philo, t_share *share)
 	return (0);
 }
 
-static void	monitoring(t_philo *philo)
+int	check_finish(t_philo *philo)
 {
 	uint64_t	now;
 
-	while (42)
+	pthread_mutex_lock(&(philo->share->lock_m));
+	now = get_time();
+	if (now - philo->last_meal >= (uint64_t)philo->share->args->time_to_die)
 	{
-		pthread_mutex_lock(&(philo->share->lock_m));
-		now = get_time();
-		if (now - philo->last_meal >= (uint64_t)philo->share->args->time_to_die)
-		{
-			print_msg(philo, "died", "\033[0;31m");
-			pthread_mutex_lock(&(philo->share->died_m));
-			philo->share->running &= ~1;
-			break ;
-		}
-		if (philo->share->args->number == philo->share->full_philo)
-		{
-			pthread_mutex_lock(&(philo->share->died_m));
-			philo->share->running &= ~1;
-			break ;
-		}
+		print_msg(philo, "died", "\033[0;31m");
+		philo->share->running &= ~1;
 		pthread_mutex_unlock(&(philo->share->lock_m));
+		return (0);
 	}
-	pthread_mutex_unlock(&(philo->share->died_m));
-	pthread_mutex_unlock(&(philo->share->lock_m));
+	if (philo->share->args->number == philo->share->full_philo)
+	{
+		philo->share->running &= ~1;
+		pthread_mutex_unlock(&(philo->share->lock_m));
+		return (0);
+	}
+	return (1);
 }
 
 int	main(int ac, char **av)
@@ -129,7 +123,6 @@ int	main(int ac, char **av)
 			pthread_detach(philo[i].pthread);
 		i++;
 	}
-	monitoring(philo);
 	clean_memory(philo, &share);
 	return (0);
 }

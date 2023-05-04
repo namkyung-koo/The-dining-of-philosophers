@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 13:55:28 by nakoo             #+#    #+#             */
-/*   Updated: 2023/04/24 14:07:22 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/04 17:43:18 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,6 @@
 # include <stdint.h>
 # include <pthread.h>
 # include <sys/time.h>
-
-enum e_boolean {
-	FALSE,
-	TRUE
-};
 
 typedef struct s_args {
 	int	number;
@@ -42,9 +37,8 @@ typedef struct s_share {
 	t_args			*args;
 	t_philo			*philo;
 	uint64_t		start_time;
-	pthread_mutex_t	lock_m;
-	pthread_mutex_t	died_m;
 	pthread_mutex_t	*forks;
+	pthread_mutex_t	lock_m;
 	pthread_mutex_t	print_m;
 }	t_share;
 

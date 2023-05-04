@@ -6,26 +6,32 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/21 17:48:32 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/04 17:21:19 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/04 17:58:22 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static void	dining(t_philo *philo)
+static void	pickup(t_philo *philo)
 {
 	pthread_mutex_lock(&(philo->share->forks[philo->left]));
 	print_msg(philo, "has taken a left fork", "\033[0;32m");
-	usleep(50);
 	pthread_mutex_lock(&(philo->share->forks[philo->right]));
 	print_msg(philo, "has taken a right fork", "\033[0;32m");
-	usleep(50);
+}
+
+static void	eat(t_philo *philo)
+{
 	print_msg(philo, "is eating", "\033[0;34m");
 	pthread_mutex_lock(&(philo->share->lock_m));
 	philo->eat_count++;
 	philo->last_meal = get_time();
 	pthread_mutex_unlock(&(philo->share->lock_m));
 	msleep(philo->share->args->time_to_eat);
+}
+
+static void	putdown(t_philo *philo)
+{
 	pthread_mutex_unlock(&(philo->share->forks[philo->left]));
 	pthread_mutex_unlock(&(philo->share->forks[philo->right]));
 }
@@ -46,7 +52,13 @@ void	*routine(void *ptr)
 		usleep(1000);
 	while (42)
 	{
-		dining(philo);
+		if (check_finish(philo))
+		{
+			pickup(philo);
+			if (check_finish(philo))
+				eat(philo);
+		putdown(philo);
+		sleep_and_think(philo);
 		if (philo->share->args->must_eat_count == philo->eat_count)
 		{
 			pthread_mutex_lock(&(philo->share->lock_m));
@@ -54,12 +66,6 @@ void	*routine(void *ptr)
 			pthread_mutex_unlock(&(philo->share->lock_m));
 			break ;
 		}
-		pthread_mutex_lock(&(philo->share->died_m));
-		if (!(philo->share->running & 1))
-			break ;
-		pthread_mutex_unlock(&(philo->share->died_m));
-		sleep_and_think(philo);
 	}
-	pthread_mutex_unlock(&(philo->share->died_m));
 	return (NULL);
 }
