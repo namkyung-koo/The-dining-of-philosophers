@@ -1,0 +1,79 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/04/19 14:00:05 by nakoo             #+#    #+#             */
+/*   Updated: 2023/05/04 14:38:02 by nakoo            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "philo.h"
+
+int	print_error(char *msg, int value)
+{
+	ft_putstr_fd(msg, 2);
+	return (value);
+}
+
+void	print_msg(t_philo *philo, char *msg, char *color)
+{
+	uint64_t	now;
+
+	pthread_mutex_lock(&(philo->share->died_m));
+	if (!(philo->share->running & 1))
+	{
+		pthread_mutex_unlock(&(philo->share->died_m));
+		return ;
+	}
+	pthread_mutex_lock(&(philo->share->print_m));
+	now = get_time();
+	printf("%s%llu %d %s\n", color, now - philo->share->start_time, \
+	philo->id + 1, msg);
+	pthread_mutex_unlock(&(philo->share->print_m));
+	pthread_mutex_unlock(&(philo->share->died_m));
+}
+
+uint64_t	get_time(void)
+{
+	struct timeval	tv;
+
+	gettimeofday(&tv, NULL);
+	return ((tv.tv_sec * (uint64_t)1000) + (tv.tv_usec / 1000));
+}
+
+void	msleep(int time)
+{
+	uint64_t	t1;
+	uint64_t	t2;
+
+	t1 = get_time();
+	while (1)
+	{
+		t2 = get_time();
+		if (t2 - t1 >= (uint64_t)time)
+			break ;
+		usleep(100);
+	}
+}
+
+void	clean_memory(t_philo *philo, t_share *share)
+{
+	int	i;
+
+	i = 0;
+	while (i < share->args->number)
+	{
+		pthread_join(philo[i].pthread, NULL);
+		pthread_mutex_unlock(&(share->forks[i]));
+		pthread_mutex_destroy(&(share->forks[i]));
+		i++;
+	}
+	pthread_mutex_destroy(&(share->lock_m));
+	pthread_mutex_destroy(&(share->died_m));
+	pthread_mutex_destroy(&(share->print_m));
+	free(share->forks);
+	free(philo);
+}
