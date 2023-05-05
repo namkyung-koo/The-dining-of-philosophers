@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 16:58:34 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/05 19:53:44 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/05 21:06:58 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,8 @@ void	*routine(void *ptr)
 			break ;
 		putdown(philo);
 		if (is_full(philo))
+			break ;
+		if (is_end(philo))
 			break ;
 		ft_sleep(philo);
 		think(philo);
