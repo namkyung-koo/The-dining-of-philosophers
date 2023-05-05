@@ -1,20 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.c                                            :+:      :+:    :+:   */
+/*   philo_init.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/04/19 13:58:25 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/04 17:57:45 by nakoo            ###   ########.fr       */
+/*   Created: 2023/05/05 17:51:46 by nakoo             #+#    #+#             */
+/*   Updated: 2023/05/05 19:07:26 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static int	init_args(t_args *args, int ac, char **av)
+int	init_args(t_args *args, int ac, char **av)
 {
-	memset(args, 0, sizeof(t_args));
 	args->number = ft_atoi(av[1]);
 	if (args->number < 1)
 		return (print_error("The number of philosophers must exceed 0.\n", 1));
@@ -35,27 +34,26 @@ static int	init_args(t_args *args, int ac, char **av)
 		return (1);
 	if (args->time_to_die < 60 || args->time_to_eat < 60 || \
 	args->time_to_sleep < 60)
-		return (print_error("The value of time must exceed 60ms.\n", 1));
+		return (print_error("The value of time must exceed 59ms.\n", 1));
 	return (0);
 }
 
-static int	init_share(t_share *share, t_args *args)
+int	init_share(t_share *share, t_args *args)
 {
-	memset(share, 0, sizeof(t_share));
 	share->forks = (pthread_mutex_t *) \
 	malloc(sizeof(pthread_mutex_t) * args->number);
 	if (share->forks == NULL)
 		return (print_error("Failed to allocate memory.\n", 1));
-	share->running |= 1;
+	share->running = 1;
 	share->args = args;
 	share->full_philo = 0;
 	share->start_time = get_time();
 	pthread_mutex_init(&(share->lock_m), NULL);
-	pthread_mutex_init(&(share->print_m), NULL);
+	pthread_mutex_init(&(share->finish_m), NULL);
 	return (0);
 }
 
-static int	init_philo(t_philo **philo, t_share *share)
+int	init_philo(t_philo **philo, t_share *share)
 {
 	int	i;
 
@@ -78,51 +76,5 @@ static int	init_philo(t_philo **philo, t_share *share)
 		i++;
 	}
 	share->philo = *philo;
-	return (0);
-}
-
-int	check_finish(t_philo *philo)
-{
-	uint64_t	now;
-
-	pthread_mutex_lock(&(philo->share->lock_m));
-	now = get_time();
-	if (now - philo->last_meal >= (uint64_t)philo->share->args->time_to_die)
-	{
-		print_msg(philo, "died", "\033[0;31m");
-		philo->share->running &= ~1;
-		pthread_mutex_unlock(&(philo->share->lock_m));
-		return (0);
-	}
-	if (philo->share->args->number == philo->share->full_philo)
-	{
-		philo->share->running &= ~1;
-		pthread_mutex_unlock(&(philo->share->lock_m));
-		return (0);
-	}
-	return (1);
-}
-
-int	main(int ac, char **av)
-{
-	t_philo	*philo;
-	t_share	share;
-	t_args	args;
-	int		i;
-
-	if (ac < 5 || ac > 6)
-		return (print_error("The number of ac must be 5 or 6.\n", 1));
-	if (init_args(&args, ac, av) || init_share(&share, &args) \
-	|| init_philo(&philo, &share))
-		return (1);
-	i = 0;
-	while (i < args.number)
-	{
-		pthread_create(&(philo[i].pthread), NULL, routine, &(philo[i]));
-		if (args.number == 1)
-			pthread_detach(philo[i].pthread);
-		i++;
-	}
-	clean_memory(philo, &share);
 	return (0);
 }
