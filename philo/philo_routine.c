@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 16:58:34 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/06 13:41:17 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/06 15:05:32 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static int	is_full(t_philo *philo)
 	return (0);
 }
 
-static int	check_finish(t_philo *philo)
+int	check_finish(t_philo *philo)
 {
 	pthread_mutex_lock(&(philo->share->finish_m));
 	if (!(philo->share->running))
@@ -38,36 +38,39 @@ static int	check_finish(t_philo *philo)
 	return (0);
 }
 
-static int	is_end(void *ptr)
+void	*is_end(void *ptr)
 {
 	t_philo		*philo;
 	uint64_t	now;
 
 	philo = (t_philo *)ptr;
 	if (check_finish(philo))
-		return (1);
+		return (NULL);
 	now = get_time();
-	if (now - philo->last_meal >= (uint64_t)philo->share->args->time_to_die)
+	while (42)
 	{
-		print_msg(philo, "died", "\033[0;31m");
-		pthread_mutex_lock(&(philo->share->finish_m));
-		philo->share->running = 0;
-		pthread_mutex_unlock(&(philo->share->finish_m));
-		return (1);
+		if (now - philo->last_meal >= (uint64_t)philo->share->args->time_to_die)
+		{
+			print_msg(philo, "died", "\033[0;31m");
+			pthread_mutex_lock(&(philo->share->finish_m));
+			philo->share->running = 0;
+			pthread_mutex_unlock(&(philo->share->finish_m));
+			return (NULL);
+		}
+		if (philo->share->args->number == philo->share->full_philo)
+		{
+			pthread_mutex_lock(&(philo->share->finish_m));
+			philo->share->running = 0;
+			pthread_mutex_unlock(&(philo->share->finish_m));
+			return (NULL);
+		}
 	}
-	if (philo->share->args->number == philo->share->full_philo)
-	{
-		pthread_mutex_lock(&(philo->share->finish_m));
-		philo->share->running = 0;
-		pthread_mutex_unlock(&(philo->share->finish_m));
-		return (1);
-	}
-	return (0);
+	return (NULL);
 }
 
 void	*routine(void *ptr)
 {
-	t_philo		*philo;
+	t_philo	*philo;
 
 	philo = (t_philo *)ptr;
 	if (!((philo->id) & 1))

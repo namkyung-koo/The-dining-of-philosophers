@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 13:55:28 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/06 13:41:26 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/06 15:05:39 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,5 +77,7 @@ void		think(t_philo *philo);
 
 /* philo_routine.c */
 void		*routine(void *ptr);
+void		*is_end(void *ptr);
+int			check_finish(t_philo *philo);
 
 #endif
