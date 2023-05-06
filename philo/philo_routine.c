@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 16:58:34 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/06 15:05:32 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/06 15:18:27 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,20 +42,26 @@ void	*is_end(void *ptr)
 {
 	t_philo		*philo;
 	uint64_t	now;
+	int			i;
 
 	philo = (t_philo *)ptr;
-	if (check_finish(philo))
-		return (NULL);
-	now = get_time();
 	while (42)
 	{
-		if (now - philo->last_meal >= (uint64_t)philo->share->args->time_to_die)
+		usleep(100);
+		now = get_time();
+		i = 0;
+		while (i < philo->share->args->number)
 		{
-			print_msg(philo, "died", "\033[0;31m");
-			pthread_mutex_lock(&(philo->share->finish_m));
-			philo->share->running = 0;
-			pthread_mutex_unlock(&(philo->share->finish_m));
-			return (NULL);
+			if (now - philo[i].last_meal >= \
+			(uint64_t)philo->share->args->time_to_die)
+			{
+				print_msg(philo, "died", "\033[0;31m");
+				pthread_mutex_lock(&(philo->share->finish_m));
+				philo->share->running = 0;
+				pthread_mutex_unlock(&(philo->share->finish_m));
+				return (NULL);
+			}
+			i++;
 		}
 		if (philo->share->args->number == philo->share->full_philo)
 		{
@@ -78,15 +84,9 @@ void	*routine(void *ptr)
 	while (42)
 	{
 		pickup(philo);
-		if (is_end(philo))
-			break ;
 		eat(philo);
-		if (is_end(philo))
-			break ;
 		putdown(philo);
 		if (is_full(philo))
-			break ;
-		if (is_end(philo))
 			break ;
 		ft_sleep(philo);
 		think(philo);
