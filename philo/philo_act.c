@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/21 17:48:32 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/06 15:19:12 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/06 16:51:56 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,11 @@ void	pickup(t_philo *philo)
 {
 	pthread_mutex_lock(&(philo->share->forks[philo->left]));
 	print_msg(philo, "has taken a left fork", "\033[0;32m");
+	if (philo->share->args->number == 1)
+	{
+		usleep(philo->share->args->time_to_die * 1000);
+		pthread_mutex_unlock(&(philo->share->forks[philo->left]));
+	}
 	pthread_mutex_lock(&(philo->share->forks[philo->right]));
 	print_msg(philo, "has taken a right fork", "\033[0;32m");
 }

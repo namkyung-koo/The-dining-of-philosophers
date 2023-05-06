@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 13:58:25 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/06 15:15:44 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/06 16:49:06 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ int	main(int ac, char **av)
 		i++;
 	}
 	pthread_create(&monitor, NULL, is_end, philo);
+	pthread_join(monitor, NULL);
 	clean_memory(philo, &share);
 	return (0);
 }
