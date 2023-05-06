@@ -1,7 +1,7 @@
 NAME = philo_bonus
 CFLAGS = -Wall -Wextra -Werror -MMD -MP
 RM = rm -rf
-SRCS = main_bonus.c philo_init_bonus.c philo_act_bonus.c philo_routine_bonus.c philo_utils_bonus.c ft_utils_bonus.c
+SRCS = main.c philo_init_bonus.c philo_act_bonus.c philo_routine_bonus.c philo_utils_bonus.c ft_utils_bonus.c
 OBJS = $(addprefix $(DIR)/, $(SRCS:.c=.o))
 DEPS = $(addprefix $(DIR)/, $(SRCS:.c=.d))
 DIR = objs

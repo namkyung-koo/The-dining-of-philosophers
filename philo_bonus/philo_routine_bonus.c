@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo_routine.c                                    :+:      :+:    :+:   */
+/*   philo_routine_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 16:58:34 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/06 19:07:57 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/06 23:00:00 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,33 +43,31 @@ static int	is_full(t_philo *philo)
 
 static void	*change_running(t_philo *philo)
 {
-	pthread_mutex_lock(&(philo->share->finish_m));
+	sem_wait(philo->share->finish_s);
 	philo->share->running = 0;
-	pthread_mutex_unlock(&(philo->share->finish_m));
+	sem_post(philo->share->finish_s);
 	return (NULL);
 }
 
-void	*is_end(void *ptr)
+void	*is_end(t_philo *philo)
 {
-	t_philo	*philo;
-	int		i;
+	int	i;
 
-	philo = (t_philo *)ptr;
 	while (42)
 	{
 		usleep(100);
 		i = -1;
 		while (++i < philo->share->args->number)
 		{
-			pthread_mutex_lock(&(philo->share->lock_m));
+			sem_wait(philo->share->lock_s);
 			if (get_time() - philo[i].last_meal \
 			>= (uint64_t)philo->share->args->time_to_die)
 			{
-				pthread_mutex_unlock(&(philo->share->lock_m));
+				sem_post(philo->share->lock_s);
 				print_msg(philo, "died", "\033[0;31m");
 				return (change_running(philo));
 			}
-			pthread_mutex_unlock(&(philo->share->lock_m));
+			sem_post(philo->share->lock_s);
 		}
 		if (philo->share->args->number == philo->share->full_philo)
 			return (change_running(philo));
@@ -77,11 +75,8 @@ void	*is_end(void *ptr)
 	return (NULL);
 }
 
-void	*routine(void *ptr)
+void	routine(t_philo *philo)
 {
-	t_philo	*philo;
-
-	philo = (t_philo *)ptr;
 	if (!((philo->id) & 1))
 		usleep(1000);
 	while (42)
@@ -95,5 +90,5 @@ void	*routine(void *ptr)
 		think(philo);
 	}
 	putdown(philo);
-	return (NULL);
+	return ;
 }

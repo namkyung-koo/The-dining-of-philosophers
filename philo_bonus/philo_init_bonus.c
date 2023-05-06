@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 17:51:46 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/06 19:03:35 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/06 22:46:58 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,29 @@ int	init_args(t_args *args, int ac, char **av)
 
 int	init_share(t_share *share, t_args *args)
 {
-	share->running = 1;
 	share->args = args;
+	share->running = 1;
 	share->full_philo = 0;
 	share->start_time = get_time();
+	share->forks = sem_open("/sem", O_CREAT, 0644, args->number);
+	if (share->forks == SEM_FAILED)
+		return (print_error("Failed to open semaphore.\n", 1));
+	share->lock_s = sem_open("/sem_lock", O_CREAT, 0644, 1);
+	if (share->lock_s == SEM_FAILED)
+	{
+		sem_close(share->forks);
+		sem_unlink("/sem");
+		return (print_error("Failed to open semaphore.\n", 1));
+	}
+	share->finish_s = sem_open("/sem_finish", O_CREAT, 0644, 1);
+	if (share->finish_s == SEM_FAILED)
+	{
+		sem_close(share->forks);
+		sem_unlink("/sem");
+		sem_close(share->lock_s);
+		sem_unlink("/sem_lock");
+		return (print_error("Failed to open semaphore.\n", 1));
+	}
 	return (0);
 }
 
@@ -58,8 +77,6 @@ int	init_philo(t_philo **philo, t_share *share)
 	while (i < share->args->number)
 	{
 		(*philo)[i].id = i;
-		(*philo)[i].left = i;
-		(*philo)[i].right = (i + 1) % share->args->number;
 		(*philo)[i].eat_count = 0;
 		(*philo)[i].share = share;
 		(*philo)[i].last_meal = get_time();
