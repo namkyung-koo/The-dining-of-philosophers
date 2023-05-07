@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 16:58:34 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/06 23:00:00 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/07 13:37:50 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 
 static int	check_finish(t_philo *philo)
 {
-	pthread_mutex_lock(&(philo->share->finish_m));
+	sem_wait(philo->share->finish_s);
 	if (!(philo->share->running))
 	{
-		pthread_mutex_unlock(&(philo->share->finish_m));
+		sem_post(philo->share->finish_s);
 		return (1);
 	}
-	pthread_mutex_unlock(&(philo->share->finish_m));
+	sem_post(philo->share->finish_s);
 	return (0);
 }
 
@@ -33,9 +33,9 @@ static int	is_full(t_philo *philo)
 	}
 	if (philo->share->args->must_eat_count == philo->eat_count)
 	{
-		pthread_mutex_lock(&(philo->share->lock_m));
+		sem_wait(philo->share->lock_s);
 		philo->share->full_philo++;
-		pthread_mutex_unlock(&(philo->share->lock_m));
+		sem_post(philo->share->lock_s);
 		return (1);
 	}
 	return (0);
@@ -49,10 +49,12 @@ static void	*change_running(t_philo *philo)
 	return (NULL);
 }
 
-void	*is_end(t_philo *philo)
+void	*is_end(void *ptr)
 {
-	int	i;
+	t_philo	*philo;
+	int		i;
 
+	philo = (t_philo *)ptr;
 	while (42)
 	{
 		usleep(100);
@@ -77,7 +79,7 @@ void	*is_end(t_philo *philo)
 
 void	routine(t_philo *philo)
 {
-	if (!((philo->id) & 1))
+	if (!(philo->id & 1))
 		usleep(1000);
 	while (42)
 	{

@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 13:55:28 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/06 23:00:25 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/06 23:59:00 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <stdint.h>
+# include <signal.h>
 # include <pthread.h>
 # include <sys/time.h>
 # include <semaphore.h>
@@ -76,6 +77,6 @@ void		think(t_philo *philo);
 
 /* philo_routine.c */
 void		routine(t_philo *philo);
-void		*is_end(t_philo *philo);
+void		*is_end(void *ptr);
 
 #endif

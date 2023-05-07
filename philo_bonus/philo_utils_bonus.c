@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 14:00:05 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/06 19:07:32 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/07 13:41:24 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,14 @@ void	print_msg(t_philo *philo, char *msg, char *color)
 {
 	uint64_t	now;
 
+	sem_wait(philo->share->finish_s);
 	if (philo->share->running)
 	{
 		now = get_time();
 		printf("%s%llu %d %s\n", color, now - philo->share->start_time, \
 		philo->id + 1, msg);
 	}
+	sem_post(philo->share->finish_s);
 }
 
 uint64_t	get_time(void)
@@ -55,4 +57,19 @@ void	msleep(int time)
 
 void	clean_memory(t_philo *philo, t_share *share)
 {
+	int	i;
+
+	i = 0;
+	while (i < share->args->number)
+	{
+		kill(philo[i].pid, SIGKILL);
+		i++;
+	}
+	sem_close(share->forks);
+	sem_unlink("/sem");
+	sem_close(share->lock_s);
+	sem_unlink("/sem_lock");
+	sem_close(share->finish_s);
+	sem_unlink("/sem_finish");
+	free(philo);
 }

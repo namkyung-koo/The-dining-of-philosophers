@@ -6,13 +6,25 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 13:58:25 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/06 22:57:39 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/07 13:42:44 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-static void	set_dinner(t_philo **philo)
+static void	wait_children(int number)
+{
+	int	i;
+
+	i = 0;
+	while (i < number)
+	{
+		waitpid(-1, NULL, 0);
+		i++;
+	}
+}
+
+static int	set_dinner(t_philo **philo)
 {
 	pthread_t	monitor;
 	int			i;
@@ -21,14 +33,18 @@ static void	set_dinner(t_philo **philo)
 	while (i < (*philo)->share->args->number)
 	{
 		(*philo)[i].pid = fork();
-		if ((*philo[i]).pid == 0)
+		if ((*philo)[i].pid == 0)
 			routine(&(*philo)[i]);
-		else if ((*philo)[i].pid > 0)
-			wait_children(*philo);
+		else if ((*philo)[i].pid < 0)
+			return (1);
 		i++;
 	}
+	// is_end(*philo);
+	// exit(0);
 	pthread_create(&monitor, NULL, is_end, (*philo));
 	pthread_join(monitor, NULL);
+	wait_children((*philo)->share->args->number);
+	return (0);
 }
 
 int	main(int ac, char **av)
@@ -42,6 +58,8 @@ int	main(int ac, char **av)
 	if (init_args(&args, ac, av) || init_share(&share, &args) \
 	|| init_philo(&philo, &share))
 		return (1);
-	set_dinner(&philo);
+	if (set_dinner(&philo))
+		return (print_error("Failed to fork", 1));
+	clean_memory(philo, &share);
 	return (0);
 }
