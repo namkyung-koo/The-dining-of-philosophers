@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 16:58:34 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/06 16:45:11 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/08 14:14:17 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,16 +21,20 @@ static int	check_finish(t_philo *philo)
 		return (1);
 	}
 	pthread_mutex_unlock(&(philo->share->finish_m));
+	pthread_mutex_lock(&(philo->share->lock_m));
+	if (philo->share->args->number == philo->share->full_philo)
+	{
+		pthread_mutex_unlock(&(philo->share->lock_m));
+		return (1);
+	}
+	pthread_mutex_unlock(&(philo->share->lock_m));
 	return (0);
 }
 
 static int	is_full(t_philo *philo)
 {
 	if (check_finish(philo))
-	{
-		putdown(philo);
 		return (1);
-	}
 	if (philo->share->args->must_eat_count == philo->eat_count)
 	{
 		pthread_mutex_lock(&(philo->share->lock_m));
@@ -71,7 +75,7 @@ void	*is_end(void *ptr)
 			}
 			pthread_mutex_unlock(&(philo->share->lock_m));
 		}
-		if (philo->share->args->number == philo->share->full_philo)
+		if (check_finish(philo))
 			return (change_running(philo));
 	}
 	return (NULL);
