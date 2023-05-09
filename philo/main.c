@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 13:58:25 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/09 08:46:04 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/09 18:17:46 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,12 @@ int	main(int ac, char **av)
 	if (init_args(&args, ac, av) || init_share(&share, &args) \
 	|| init_philo(&philo, &share))
 		return (1);
-	i = 0;
-	while (i < args.number)
-	{
+	i = -1;
+	while (++i < args.number)
 		pthread_create(&(philo[i].pthread), NULL, routine, &(philo[i]));
-		i++;
-	}
+	i = -1;
+	while (++i < args.number)
+		pthread_join(philo[i].pthread, NULL);
 	pthread_create(&monitor, NULL, is_end, philo);
 	pthread_join(monitor, NULL);
 	clean_memory(philo, &share);

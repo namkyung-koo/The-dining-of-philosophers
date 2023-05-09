@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 14:00:05 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/09 08:39:47 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/09 18:32:27 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,29 +32,6 @@ void	print_msg(t_philo *philo, char *msg, char *color)
 	pthread_mutex_unlock(&(philo->share->finish_m));
 }
 
-uint64_t	get_time(void)
-{
-	struct timeval	tv;
-
-	gettimeofday(&tv, NULL);
-	return ((tv.tv_sec * (uint64_t)1000) + (tv.tv_usec / 1000));
-}
-
-void	msleep(int time)
-{
-	uint64_t	t1;
-	uint64_t	t2;
-
-	t1 = get_time();
-	while (1)
-	{
-		t2 = get_time();
-		if (t2 - t1 >= (uint64_t)time)
-			break ;
-		usleep(100);
-	}
-}
-
 void	clean_memory(t_philo *philo, t_share *share)
 {
 	int	i;
@@ -62,8 +39,7 @@ void	clean_memory(t_philo *philo, t_share *share)
 	i = 0;
 	while (i < share->args->number)
 	{
-		pthread_join(philo[i].pthread, NULL);
-		pthread_mutex_destroy(&(share->forks[i]));
+		pthread_mutex_destroy(&(share->forks[i].fork));
 		i++;
 	}
 	pthread_mutex_destroy(&(share->lock_m));

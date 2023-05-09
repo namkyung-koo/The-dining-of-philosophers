@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 17:51:46 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/05 19:07:26 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/09 18:29:40 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,7 @@ int	init_args(t_args *args, int ac, char **av)
 
 int	init_share(t_share *share, t_args *args)
 {
-	share->forks = (pthread_mutex_t *) \
-	malloc(sizeof(pthread_mutex_t) * args->number);
+	share->forks = (t_fork *)malloc(sizeof(t_fork) * args->number);
 	if (share->forks == NULL)
 		return (print_error("Failed to allocate memory.\n", 1));
 	share->running = 1;
@@ -72,7 +71,8 @@ int	init_philo(t_philo **philo, t_share *share)
 		(*philo)[i].eat_count = 0;
 		(*philo)[i].share = share;
 		(*philo)[i].last_meal = get_time();
-		pthread_mutex_init(&(share->forks[i]), NULL);
+		pthread_mutex_init(&(share->forks[i].fork), NULL);
+		share->forks[i].state = DOWN;
 		i++;
 	}
 	share->philo = *philo;
