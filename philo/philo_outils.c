@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 14:01:16 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/09 18:42:43 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/09 22:34:59 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,27 +50,4 @@ size_t	ft_strlen(const char *s)
 void	ft_putstr_fd(char *s, int fd)
 {
 	write(fd, s, ft_strlen(s));
-}
-
-uint64_t	get_time(void)
-{
-	struct timeval	tv;
-
-	gettimeofday(&tv, NULL);
-	return ((tv.tv_sec * (uint64_t)1000) + (tv.tv_usec / 1000));
-}
-
-void	msleep(int time)
-{
-	uint64_t	t1;
-	uint64_t	t2;
-
-	t1 = get_time();
-	while (1)
-	{
-		t2 = get_time();
-		if (t2 - t1 >= (uint64_t)time)
-			break ;
-		usleep(100);
-	}
 }

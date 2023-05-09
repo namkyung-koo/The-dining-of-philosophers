@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/21 17:48:32 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/09 19:21:49 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/09 22:35:23 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 void	pickup(t_philo *philo)
 {
-	// pick_fork(philo, LEFT);
 	pthread_mutex_lock(&(philo->share->forks[philo->left].fork));
 	philo->share->forks[philo->left].state = UP;
 	print_msg(philo, "has taken a fork", "\033[0;32m");
@@ -23,7 +22,6 @@ void	pickup(t_philo *philo)
 		usleep(philo->share->args->time_to_die * 1000);
 		return ;
 	}
-	// pick_fork(philo, RIGHT);
 	pthread_mutex_lock(&(philo->share->forks[philo->right].fork));
 	philo->share->forks[philo->right].state = UP;
 	print_msg(philo, "has taken a fork", "\033[0;32m");
@@ -41,12 +39,12 @@ void	eat(t_philo *philo)
 
 void	putdown(t_philo *philo)
 {
-	pthread_mutex_unlock(&(philo->share->forks[philo->left].fork));
 	philo->share->forks[philo->left].state = DOWN;
+	pthread_mutex_unlock(&(philo->share->forks[philo->left].fork));
 	if (philo->share->args->number != 1)
 	{
-		pthread_mutex_unlock(&(philo->share->forks[philo->right].fork));
 		philo->share->forks[philo->right].state = DOWN;
+		pthread_mutex_unlock(&(philo->share->forks[philo->right].fork));
 	}
 }
 
