@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 16:58:34 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/08 14:14:17 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/09 08:45:59 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void	*is_end(void *ptr)
 			>= (uint64_t)philo->share->args->time_to_die)
 			{
 				pthread_mutex_unlock(&(philo->share->lock_m));
-				print_msg(philo, "died", "\033[0;31m");
+				print_msg(&philo[i], "died", "\033[0;31m");
 				return (change_running(philo));
 			}
 			pthread_mutex_unlock(&(philo->share->lock_m));
