@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 13:55:28 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/09 18:34:20 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/09 18:57:24 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,11 @@ enum e_boolean {
 enum e_state {
 	DOWN,
 	UP
+};
+
+enum e_direction {
+	LEFT,
+	RIGHT
 };
 
 typedef struct s_args {
@@ -71,7 +76,7 @@ int			init_args(t_args *args, int ac, char **av);
 int			init_share(t_share *share, t_args *args);
 int			init_philo(t_philo **philo, t_share *share);
 
-/* ft_utils.c */
+/* philo_outils.c */
 int			ft_atoi(const char *str);
 void		msleep(int time);
 void		ft_putstr_fd(char *s, int fd);
@@ -79,6 +84,8 @@ size_t		ft_strlen(const char *s);
 uint64_t	get_time(void);
 
 /* philo_utils.c */
+int			pick_fork(t_philo *philo, int flag);
+int			get_fork_state(t_philo *philo, int flag);
 int			print_error(char *msg, int value);
 void		clean_memory(t_philo *philo, t_share *share);
 void		print_msg(t_philo *philo, char *msg, char *color);

@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 13:58:25 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/09 18:17:46 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/09 19:06:49 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,11 @@ int	main(int ac, char **av)
 	i = -1;
 	while (++i < args.number)
 		pthread_create(&(philo[i].pthread), NULL, routine, &(philo[i]));
+	pthread_create(&monitor, NULL, is_end, philo);
+	pthread_join(monitor, NULL);
 	i = -1;
 	while (++i < args.number)
 		pthread_join(philo[i].pthread, NULL);
-	pthread_create(&monitor, NULL, is_end, philo);
-	pthread_join(monitor, NULL);
 	clean_memory(philo, &share);
 	return (0);
 }
