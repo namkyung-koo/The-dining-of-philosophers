@@ -6,11 +6,50 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 14:00:05 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/06 16:35:49 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/09 22:32:33 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+int	get_fork_state(t_philo *philo, int flag)
+{
+	int	ret;
+
+	ret = FALSE;
+	if (flag == LEFT)
+	{
+		if (philo->share->forks[philo->left].state == DOWN)
+		{
+			ret = TRUE;
+			philo->share->forks[philo->left].state = UP;
+			return (ret);
+		}
+	}
+	else if (flag == RIGHT)
+	{
+		if (philo->share->forks[philo->right].state == DOWN)
+		{
+			ret = TRUE;
+			philo->share->forks[philo->right].state = UP;
+			return (ret);
+		}
+	}
+	return (ret);
+}
+
+int	pick_fork(t_philo *philo, int flag)
+{
+	int	is_pick;
+
+	is_pick = FALSE;
+	while (1)
+	{
+		is_pick = get_fork_state(philo, flag);
+		if (is_pick == TRUE)
+			return (1);
+	}
+}
 
 int	print_error(char *msg, int value)
 {
@@ -32,29 +71,6 @@ void	print_msg(t_philo *philo, char *msg, char *color)
 	pthread_mutex_unlock(&(philo->share->finish_m));
 }
 
-uint64_t	get_time(void)
-{
-	struct timeval	tv;
-
-	gettimeofday(&tv, NULL);
-	return ((tv.tv_sec * (uint64_t)1000) + (tv.tv_usec / 1000));
-}
-
-void	msleep(int time)
-{
-	uint64_t	t1;
-	uint64_t	t2;
-
-	t1 = get_time();
-	while (1)
-	{
-		t2 = get_time();
-		if (t2 - t1 >= (uint64_t)time)
-			break ;
-		usleep(100);
-	}
-}
-
 void	clean_memory(t_philo *philo, t_share *share)
 {
 	int	i;
@@ -62,8 +78,7 @@ void	clean_memory(t_philo *philo, t_share *share)
 	i = 0;
 	while (i < share->args->number)
 	{
-		pthread_join(philo[i].pthread, NULL);
-		pthread_mutex_destroy(&(share->forks[i]));
+		pthread_mutex_destroy(&(share->forks[i].fork));
 		i++;
 	}
 	pthread_mutex_destroy(&(share->lock_m));

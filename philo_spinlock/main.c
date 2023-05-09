@@ -6,37 +6,12 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 13:58:25 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/08 17:14:32 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/09 19:06:49 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-/*
-int get_fork_state(struct s_fork *fork)
-{
-	int ret;
-	
-	ret = FAIL;
-	pthread_mutex_lock(fork->lock);
-	if (fork->state == DOWN){
-		ret = SUC;
-		fork->state = UP;
-	}
-	pthread_mutex_unlock(fork->lock);
-	return (ret);
-} 
 
-int pick_fork()
-{
-	int isPick = 0;
-	while(1)
-	{
-		isPick = get_fork_state(left_fork);
-		if (isPick == SUC)
-			return (1);
-	}
-}
-*/
 int	main(int ac, char **av)
 {
 	pthread_t	monitor;
@@ -50,14 +25,14 @@ int	main(int ac, char **av)
 	if (init_args(&args, ac, av) || init_share(&share, &args) \
 	|| init_philo(&philo, &share))
 		return (1);
-	i = 0;
-	while (i < args.number)
-	{
+	i = -1;
+	while (++i < args.number)
 		pthread_create(&(philo[i].pthread), NULL, routine, &(philo[i]));
-		i++;
-	}
 	pthread_create(&monitor, NULL, is_end, philo);
 	pthread_join(monitor, NULL);
+	i = -1;
+	while (++i < args.number)
+		pthread_join(philo[i].pthread, NULL);
 	clean_memory(philo, &share);
 	return (0);
 }

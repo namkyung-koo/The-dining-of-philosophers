@@ -6,54 +6,54 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 14:00:05 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/09 19:21:41 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/09 22:32:11 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-// int	get_fork_state(t_philo *philo, int flag)
-// {
-// 	int	ret;
+int	get_fork_state(t_philo *philo, int flag)
+{
+	int	ret;
 
-// 	ret = FALSE;
-// 	if (flag == LEFT)
-// 	{
-// 		pthread_mutex_lock(&(philo->share->forks[philo->left].fork));
-// 		if (philo->share->forks[philo->left].state == DOWN)
-// 		{
-// 			ret = TRUE;
-// 			philo->share->forks[philo->left].state = UP;
-// 			return (ret);
-// 		}
-// 		pthread_mutex_unlock(&(philo->share->forks[philo->left].fork));
-// 	}
-// 	else if (flag == RIGHT)
-// 	{
-// 		pthread_mutex_lock(&(philo->share->forks[philo->right].fork));
-// 		if (philo->share->forks[philo->right].state == DOWN)
-// 		{
-// 			ret = TRUE;
-// 			philo->share->forks[philo->right].state = UP;
-// 			return (ret);
-// 		}
-// 		pthread_mutex_unlock(&(philo->share->forks[philo->right].fork));
-// 	}
-// 	return (ret);
-// }
+	ret = FALSE;
+	if (flag == LEFT)
+	{
+		// pthread_mutex_lock(&(philo->share->forks[philo->left].fork));
+		if (philo->share->forks[philo->left].state == DOWN)
+		{
+			ret = TRUE;
+			philo->share->forks[philo->left].state = UP;
+			return (ret);
+		}
+		// pthread_mutex_unlock(&(philo->share->forks[philo->left].fork));
+	}
+	else if (flag == RIGHT)
+	{
+		// pthread_mutex_lock(&(philo->share->forks[philo->right].fork));
+		if (philo->share->forks[philo->right].state == DOWN)
+		{
+			ret = TRUE;
+			philo->share->forks[philo->right].state = UP;
+			return (ret);
+		}
+		// pthread_mutex_unlock(&(philo->share->forks[philo->right].fork));
+	}
+	return (ret);
+}
 
-// int	pick_fork(t_philo *philo, int flag)
-// {
-// 	int	is_pick;
+int	pick_fork(t_philo *philo, int flag)
+{
+	int	is_pick;
 
-// 	is_pick = FALSE;
-// 	while (1)
-// 	{
-// 		is_pick = get_fork_state(philo, flag);
-// 		if (is_pick == TRUE)
-// 			return (1);
-// 	}
-// }
+	is_pick = FALSE;
+	while (1)
+	{
+		is_pick = get_fork_state(philo, flag);
+		if (is_pick == TRUE)
+			return (1);
+	}
+}
 
 int	print_error(char *msg, int value)
 {

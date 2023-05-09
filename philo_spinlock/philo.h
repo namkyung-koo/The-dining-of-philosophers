@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 13:55:28 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/08 17:15:03 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/09 18:57:24 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,21 @@
 # include <pthread.h>
 # include <sys/time.h>
 
+enum e_boolean {
+	FALSE,
+	TRUE
+};
+
+enum e_state {
+	DOWN,
+	UP
+};
+
+enum e_direction {
+	LEFT,
+	RIGHT
+};
+
 typedef struct s_args {
 	int	number;
 	int	time_to_die;
@@ -28,6 +43,11 @@ typedef struct s_args {
 	int	must_eat_count;
 }	t_args;
 
+typedef struct s_fork {
+	pthread_mutex_t	fork;
+	int				state;
+}	t_fork;
+
 typedef struct s_philo	t_philo;
 
 typedef struct s_share {
@@ -35,8 +55,8 @@ typedef struct s_share {
 	int				full_philo;
 	t_args			*args;
 	t_philo			*philo;
+	t_fork			*forks;
 	uint64_t		start_time;
-	pthread_mutex_t	*forks;
 	pthread_mutex_t	lock_m;
 	pthread_mutex_t	finish_m;
 }	t_share;
@@ -56,14 +76,16 @@ int			init_args(t_args *args, int ac, char **av);
 int			init_share(t_share *share, t_args *args);
 int			init_philo(t_philo **philo, t_share *share);
 
-/* ft_utils.c */
+/* philo_outils.c */
 int			ft_atoi(const char *str);
-size_t		ft_strlen(const char *s);
+void		msleep(int time);
 void		ft_putstr_fd(char *s, int fd);
+size_t		ft_strlen(const char *s);
+uint64_t	get_time(void);
 
 /* philo_utils.c */
-uint64_t	get_time(void);
-void		msleep(int time);
+int			pick_fork(t_philo *philo, int flag);
+int			get_fork_state(t_philo *philo, int flag);
 int			print_error(char *msg, int value);
 void		clean_memory(t_philo *philo, t_share *share);
 void		print_msg(t_philo *philo, char *msg, char *color);
