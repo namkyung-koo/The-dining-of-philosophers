@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 17:51:46 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/09 18:29:40 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/10 11:08:43 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ int	init_share(t_share *share, t_args *args)
 	share->full_philo = 0;
 	share->start_time = get_time();
 	pthread_mutex_init(&(share->lock_m), NULL);
+	pthread_mutex_init(&(share->print_m), NULL);
 	pthread_mutex_init(&(share->finish_m), NULL);
 	return (0);
 }

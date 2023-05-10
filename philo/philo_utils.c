@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 14:00:05 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/09 22:34:50 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/10 11:12:10 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,11 @@ void	print_msg(t_philo *philo, char *msg, char *color)
 	pthread_mutex_lock(&(philo->share->finish_m));
 	if (philo->share->running)
 	{
+		pthread_mutex_lock(&(philo->share->print_m));
 		now = get_time();
 		printf("%s%llu %d %s\n", color, now - philo->share->start_time, \
 		philo->id + 1, msg);
+		pthread_mutex_unlock(&(philo->share->print_m));
 	}
 	pthread_mutex_unlock(&(philo->share->finish_m));
 }
@@ -43,6 +45,7 @@ void	clean_memory(t_philo *philo, t_share *share)
 		i++;
 	}
 	pthread_mutex_destroy(&(share->lock_m));
+	pthread_mutex_destroy(&(share->print_m));
 	pthread_mutex_destroy(&(share->finish_m));
 	free(share->forks);
 	free(philo);
