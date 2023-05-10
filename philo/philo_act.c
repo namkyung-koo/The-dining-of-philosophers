@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/21 17:48:32 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/09 22:35:23 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/10 16:09:25 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,15 @@ void	pickup(t_philo *philo)
 
 void	eat(t_philo *philo)
 {
-	print_msg(philo, "is eating", "\033[0;34m");
-	pthread_mutex_lock(&(philo->share->lock_m));
-	philo->eat_count++;
-	philo->last_meal = get_time();
-	pthread_mutex_unlock(&(philo->share->lock_m));
-	msleep(philo->share->args->time_to_eat);
+	if (philo->share->args->number != 1)
+	{
+		print_msg(philo, "is eating", "\033[0;34m");
+		pthread_mutex_lock(&(philo->share->lock_m));
+		philo->eat_count++;
+		philo->last_meal = get_time();
+		pthread_mutex_unlock(&(philo->share->lock_m));
+		msleep(philo->share->args->time_to_eat);
+	}
 }
 
 void	putdown(t_philo *philo)

@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 13:55:28 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/10 11:21:05 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/10 16:18:36 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ typedef struct s_share {
 	t_fork			*forks;
 	uint64_t		start_time;
 	pthread_mutex_t	lock_m;
-	pthread_mutex_t	print_m;
 	pthread_mutex_t	finish_m;
 }	t_share;
 
