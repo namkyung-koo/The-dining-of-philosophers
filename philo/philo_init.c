@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 17:51:46 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/10 16:13:46 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/14 18:45:31 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,39 +38,39 @@ int	init_args(t_args *args, int ac, char **av)
 	return (0);
 }
 
-int	init_share(t_share *share, t_args *args)
+int	init_share(t_share *share, int number)
 {
-	share->forks = (t_fork *)malloc(sizeof(t_fork) * args->number);
+	share->forks = (t_fork *)malloc(sizeof(t_fork) * number);
 	if (share->forks == NULL)
 		return (print_error("Failed to allocate memory.\n", 1));
 	share->running = 1;
-	share->args = args;
 	share->full_philo = 0;
-	share->start_time = get_time();
 	pthread_mutex_init(&(share->lock_m), NULL);
 	pthread_mutex_init(&(share->finish_m), NULL);
 	return (0);
 }
 
-int	init_philo(t_philo **philo, t_share *share)
+int	init_philo(t_philo **philo, t_share *share, t_args *args)
 {
 	int	i;
 
-	*philo = (t_philo *)malloc(sizeof(t_philo) * share->args->number);
+	*philo = (t_philo *)malloc(sizeof(t_philo) * args->number);
 	if (*philo == NULL)
 	{
 		free(share->forks);
 		return (print_error("Failed to allocate memory.\n", 1));
 	}
 	i = 0;
-	while (i < share->args->number)
+	while (i < args->number)
 	{
 		(*philo)[i].id = i;
 		(*philo)[i].left = i;
-		(*philo)[i].right = (i + 1) % share->args->number;
+		(*philo)[i].right = (i + 1) % args->number;
 		(*philo)[i].eat_count = 0;
+		(*philo)[i].args = args;
 		(*philo)[i].share = share;
 		(*philo)[i].last_meal = get_time();
+		(*philo)[i].start_time = get_time();
 		pthread_mutex_init(&(share->forks[i].fork), NULL);
 		share->forks[i].state = DOWN;
 		i++;

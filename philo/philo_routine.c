@@ -6,13 +6,13 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 16:58:34 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/10 12:51:31 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/14 18:39:13 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static int	check_finish(t_philo *philo)
+int	check_finish(t_philo *philo)
 {
 	pthread_mutex_lock(&(philo->share->finish_m));
 	if (!(philo->share->running))
@@ -22,7 +22,7 @@ static int	check_finish(t_philo *philo)
 	}
 	pthread_mutex_unlock(&(philo->share->finish_m));
 	pthread_mutex_lock(&(philo->share->lock_m));
-	if (philo->share->args->number == philo->share->full_philo)
+	if (philo->args->number == philo->share->full_philo)
 	{
 		pthread_mutex_unlock(&(philo->share->lock_m));
 		return (1);
@@ -35,7 +35,7 @@ static int	is_full(t_philo *philo)
 {
 	if (check_finish(philo))
 		return (1);
-	if (philo->share->args->must_eat_count == philo->eat_count)
+	if (philo->args->must_eat_count == philo->eat_count)
 	{
 		pthread_mutex_lock(&(philo->share->lock_m));
 		philo->share->full_philo++;
@@ -63,11 +63,11 @@ void	*is_end(void *ptr)
 	{
 		usleep(100);
 		i = -1;
-		while (++i < philo->share->args->number)
+		while (++i < philo->args->number)
 		{
 			pthread_mutex_lock(&(philo->share->lock_m));
 			if (get_time() - philo[i].last_meal \
-			>= (uint64_t)philo->share->args->time_to_die)
+			>= (uint64_t)philo->args->time_to_die)
 			{
 				pthread_mutex_unlock(&(philo->share->lock_m));
 				print_msg(&philo[i], "died", "\033[0;31m");
@@ -86,6 +86,8 @@ void	*routine(void *ptr)
 	t_philo	*philo;
 
 	philo = (t_philo *)ptr;
+	pthread_mutex_lock(&(philo->share->lock_m));
+	pthread_mutex_unlock(&(philo->share->lock_m));
 	if (!((philo->id) & 1))
 		usleep(1000);
 	while (42)
@@ -96,7 +98,6 @@ void	*routine(void *ptr)
 			break ;
 		putdown(philo);
 		ft_sleep(philo);
-		think(philo);
 	}
 	putdown(philo);
 	return (NULL);

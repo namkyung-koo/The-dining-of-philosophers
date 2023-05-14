@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 13:55:28 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/10 16:18:36 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/14 18:45:22 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,8 @@ typedef struct s_philo	t_philo;
 typedef struct s_share {
 	int				running;
 	int				full_philo;
-	t_args			*args;
 	t_philo			*philo;
 	t_fork			*forks;
-	uint64_t		start_time;
 	pthread_mutex_t	lock_m;
 	pthread_mutex_t	finish_m;
 }	t_share;
@@ -56,15 +54,17 @@ typedef struct s_philo {
 	int				left;
 	int				right;
 	int				eat_count;
-	uint64_t		last_meal;
+	t_args			*args;
 	t_share			*share;
+	uint64_t		last_meal;
+	uint64_t		start_time;
 	pthread_t		pthread;
 }	t_philo;
 
 /* philo_init.c */
 int			init_args(t_args *args, int ac, char **av);
-int			init_share(t_share *share, t_args *args);
-int			init_philo(t_philo **philo, t_share *share);
+int			init_share(t_share *share, int number);
+int			init_philo(t_philo **philo, t_share *share, t_args *args);
 
 /* philo_outils.c */
 int			ft_atoi(const char *str);
@@ -86,6 +86,7 @@ void		ft_sleep(t_philo *philo);
 void		think(t_philo *philo);
 
 /* philo_routine.c */
+int			check_finish(t_philo *philo);
 void		*routine(void *ptr);
 void		*is_end(void *ptr);
 
