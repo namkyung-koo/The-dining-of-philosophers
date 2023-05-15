@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/05 16:58:34 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/14 18:39:13 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/15 14:33:04 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,12 +92,15 @@ void	*routine(void *ptr)
 		usleep(1000);
 	while (42)
 	{
-		pickup(philo);
-		eat(philo);
+		if (pickup(philo))
+			break ;
+		if (eat(philo))
+			break ;
 		if (is_full(philo))
 			break ;
 		putdown(philo);
-		ft_sleep(philo);
+		if (ft_sleep(philo))
+			break ;
 	}
 	putdown(philo);
 	return (NULL);
