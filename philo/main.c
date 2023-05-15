@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 13:58:25 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/15 14:29:52 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/15 17:21:43 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ int	main(int ac, char **av)
 	pthread_mutex_unlock(&(philo->share->lock_m));
 	pthread_create(&monitor, NULL, is_end, philo);
 	pthread_join(monitor, NULL);
+	check_finish(philo);
 	i = -1;
 	while (++i < args.number)
 		pthread_join(philo[i].pthread, NULL);

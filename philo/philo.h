@@ -6,7 +6,7 @@
 /*   By: nakoo <nakoo@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 13:55:28 by nakoo             #+#    #+#             */
-/*   Updated: 2023/05/15 16:04:30 by nakoo            ###   ########.fr       */
+/*   Updated: 2023/05/15 17:13:53 by nakoo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,10 +79,10 @@ void		print_msg(t_philo *philo, char *msg, char *color);
 uint64_t	get_time(void);
 
 /* philo_act.c */
-int			pickup(t_philo *philo);
-int			eat(t_philo *philo);
-int			ft_sleep(t_philo *philo);
+void		pickup(t_philo *philo);
+void		eat(t_philo *philo);
 void		putdown(t_philo *philo);
+void		ft_sleep(t_philo *philo);
 
 /* philo_routine.c */
 int			check_finish(t_philo *philo);
